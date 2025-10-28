@@ -42,7 +42,7 @@
 (defun bbm--get-first-buffer-that-should-use-compilation-window ()
   "Get the window displaying one of my custom compilation buffers.
 
-These are just names of buffers that I threat as compilation buffers."
+These are just names of buffers that I treat as compilation buffers."
   (let* ((regexp (regexp-opt bbm-match-strings))
          (first-matched-buffer
           (seq-find
@@ -66,8 +66,13 @@ This action function is designed to be used in `display-buffer-alist'."
           (or existing-buffer-window compilation-window other-possible-window)))
     (if desired-window
         (set-window-buffer desired-window buffer)
+
+      ;; Add (side . bottom) to the ACTION alist if not already present
+      (unless (assq 'side action)
+        (setf (alist-get 'side action) 'bottom))
+
       ;; Fall back to displaying buffer at the bottom
-      (display-buffer-at-bottom buffer action))))
+      (display-buffer-in-side-window buffer action))))
 
 
 (provide 'bottom-buffer-manager)
